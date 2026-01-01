@@ -179,6 +179,63 @@ python notify.py deploy /path/to/repo "Server Name"
 
 ---
 
+## 9. Remote Server File Modifications
+
+### Problem
+Modifying files on remote servers (VPS) via SSH can fail due to:
+- Complex quoting issues with heredocs containing special characters
+- `sed` struggles with multi-line pattern matching
+- Embedded code (Python/JS) inside bash commands breaks parsing
+
+### Solution: Script Transfer Pattern
+
+**Instead of this (error-prone):**
+```bash
+ssh user@server "sed -i 's/old/new/' /path/file.py"
+ssh user@server "cat > /path/file.py << 'EOF'
+complex code with '''quotes''' and $variables
+EOF"
+```
+
+**Do this (reliable):**
+```bash
+# 1. Create script locally
+cat > update_script.py << 'EOF'
+# Your Python code here - no quoting issues
+with open("/path/to/file.py", "r") as f:
+    content = f.read()
+content = content.replace("old", "new")
+with open("/path/to/file.py", "w") as f:
+    f.write(content)
+print("Updated successfully")
+EOF
+
+# 2. Transfer and execute
+scp update_script.py user@server:/tmp/
+ssh user@server "python3 /tmp/update_script.py"
+
+# 3. Cleanup
+rm update_script.py
+ssh user@server "rm /tmp/update_script.py"
+```
+
+### When to Use Each Approach
+
+| Scenario | Recommended Approach |
+|----------|---------------------|
+| Simple single-line change | `sed -i` or `echo >>` |
+| Multi-line code changes | Script transfer pattern |
+| Complex string replacements | Script transfer pattern |
+| Code with quotes/special chars | Script transfer pattern |
+| Configuration file updates | Script transfer pattern |
+
+### Additional Tips
+- Always verify changes after modification: `grep -A 5 "pattern" file`
+- Use `git stash` before pulling if local VPS changes exist
+- Keep backup: `cp file.py file.py.bak` before modifications
+
+---
+
 ## Quick Reference
 
 ```bash
