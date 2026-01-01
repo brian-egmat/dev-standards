@@ -1,0 +1,20 @@
+# Project folders (have their own repos)
+My-first-app-gh0/
+github-deploy-notifier/
+Marketing_GC_Reviews_Monthly/
+
+# Data files
+*.xlsx
+*.csv
+*.zip
+
+# Contains credentials - keep local only
+COLLABORATOR_GUIDE_SANDEEP.md
+
+# Claude Code settings
+.claude/
+
+# Python
+__pycache__/
+*.pyc
+.env
