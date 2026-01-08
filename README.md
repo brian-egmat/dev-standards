@@ -15,6 +15,7 @@ GitHub System/
 |   +-- [2] GITHUB_ARCHITECTURE_GUIDE.md <- Architecture overview
 |   +-- [3] _templates/
 |   |       +-- BEST_PRACTICES.md        <- Coding standards
+|   |       +-- DATABASE_SCHEMA_GUIDE.md <- Database & backward compatibility
 |   |       +-- notify-on-push.yml       <- GitHub Actions workflow template
 |
 +-- VPS Settings (on server)
@@ -30,6 +31,7 @@ GitHub System/
 | **DEVELOPMENT_RULES.md** | Rules for versioning, deployment, notifications | Before ANY deployment |
 | **GITHUB_ARCHITECTURE_GUIDE.md** | How the system works | Understanding the setup |
 | **_templates/BEST_PRACTICES.md** | Coding standards, patterns | Creating new projects |
+| **_templates/DATABASE_SCHEMA_GUIDE.md** | Schema changes, migrations, rollbacks | Database modifications |
 | **_templates/notify-on-push.yml** | Teams notification workflow | Setting up new repos |
 
 ---
@@ -83,6 +85,24 @@ GitHub System/
 
 **For:** Creating new projects with proper standards
 
+### DATABASE_SCHEMA_GUIDE.md (NEW)
+
+**Key Topics:**
+- The Expand-Contract Pattern (industry standard)
+- Safe vs unsafe database operations
+- Migration strategies for zero downtime
+- Rollback scenarios and safety
+- Version compatibility matrix
+- Migration file templates
+- Tools (Flyway, Liquibase, Alembic, etc.)
+- Step-by-step examples
+
+**For:** Any database schema changes that need to be backward compatible
+
+**The Core Rule:**
+> Never make schema changes that break currently running code.
+> Old code and new code must BOTH work with the database at every step.
+
 ### notify-on-push.yml
 
 **Purpose:** GitHub Actions workflow that sends Teams notifications on every push to main/master.
@@ -133,6 +153,15 @@ ssh root@195.35.21.58 "cat /home/.settings_/claude.md"
 ```bash
 # Check best practices template
 cat _templates/BEST_PRACTICES.md
+```
+
+### Making Database Changes
+```bash
+# Read the database schema guide first!
+cat _templates/DATABASE_SCHEMA_GUIDE.md
+
+# Key pattern: Expand -> Migrate -> Contract
+# Never drop columns that running code uses
 ```
 
 ### Setting Up Notifications for a Repo
