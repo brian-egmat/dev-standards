@@ -144,17 +144,32 @@ Co-Authored-By: Claude Opus 4.5 <noreply@anthropic.com>
 
 | Type | Trigger | Source |
 |------|---------|--------|
-| **Push** | Code pushed to GitHub | GitHub Actions |
+| **Push** | Code pushed to GitHub | Centralized Webhook |
 | **Deploy** | Code deployed to VPS | deploy.sh script |
 
-### Push Notifications (Automatic)
+### Push Notifications (Centralized Webhook)
 
-Every repository must have:
-1. `.github/workflows/notify-on-push.yml` workflow file
-2. Three secrets configured in GitHub:
-   - `POWER_AUTOMATE_URL`
-   - `TEAMS_CHAT_ID`
-   - `AGENT_EMAIL`
+A centralized webhook receiver handles push notifications for ALL repositories. No per-repo secrets or GitHub Actions needed.
+
+**Setup for any new repo:**
+
+1. Go to repo → **Settings** → **Webhooks** → **Add webhook**
+2. Configure:
+   - **Payload URL:** `https://srv1140745.hstgr.cloud/github-webhook/`
+   - **Content type:** `application/json`
+   - **Secret:** (leave empty)
+   - **Events:** Just the push event
+3. Click **Add webhook**
+
+That's it! Every push will now send a Teams notification automatically.
+
+**Webhook Infrastructure (on VPS):**
+
+| Component | Location |
+|-----------|----------|
+| Webhook Receiver | `/home/github-deploy-notifier/webhook_receiver.py` |
+| Config | `/home/github-deploy-notifier/.env` |
+| Port | 8010 (proxied via nginx at `/github-webhook/`) |
 
 ### Deploy Notifications (Manual)
 
@@ -320,45 +335,44 @@ v1.3  - Fixed feature X properly
 [ ] 2. Clone locally
 [ ] 3. Set git config (name, email)
 [ ] 4. Create .gitignore
-[ ] 5. Create .env.example
+[ ] 5. Create .env.example (if needed)
 [ ] 6. Create CHANGELOG.md
 [ ] 7. Create README.md
 [ ] 8. Write application code
 [ ] 9. Test locally
 [ ] 10. Commit and push
 [ ] 11. Tag as v1
-[ ] 12. Add GitHub secrets (for push notifications)
-[ ] 13. Add .github/workflows/notify-on-push.yml
-[ ] 14. Clone on VPS
-[ ] 15. Create venv on VPS
-[ ] 16. Create .env on VPS
-[ ] 17. Test on VPS
-[ ] 18. Set up cron job (if needed)
+[ ] 12. Add GitHub webhook for Teams notifications (see below)
+[ ] 13. Clone on VPS
+[ ] 14. Create venv on VPS
+[ ] 15. Create .env on VPS (if needed)
+[ ] 16. Test on VPS
+[ ] 17. Set up cron job (if needed)
 ```
+
+### Adding GitHub Webhook (Step 12)
+
+1. Go to repo → **Settings** → **Webhooks** → **Add webhook**
+2. Configure:
+   - **Payload URL:** `https://srv1140745.hstgr.cloud/github-webhook/`
+   - **Content type:** `application/json`
+   - **Secret:** (leave empty)
+   - **Events:** Just the push event
+3. Click **Add webhook**
 
 ### Required Files
 
 ```
 project/
-├── .github/
-│   └── workflows/
-│       └── notify-on-push.yml    # Push notifications
 ├── .gitignore                     # Ignore secrets, venv, etc.
-├── .env.example                   # Template for environment vars
-├── .env                           # Actual secrets (NOT committed)
+├── .env.example                   # Template for environment vars (optional)
 ├── CHANGELOG.md                   # Version history
 ├── README.md                      # Documentation
 ├── requirements.txt               # Python dependencies
 └── main.py                        # Application code
 ```
 
-### GitHub Secrets (Required for each repo)
-
-| Secret | Value |
-|--------|-------|
-| `POWER_AUTOMATE_URL` | Power Automate HTTP trigger URL |
-| `TEAMS_CHAT_ID` | Teams chat ID |
-| `AGENT_EMAIL` | Email to tag in notifications |
+**Note:** `.github/workflows/notify-on-push.yml` is NO LONGER needed - the centralized webhook handles all push notifications.
 
 ---
 
