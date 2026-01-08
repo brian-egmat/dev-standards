@@ -11,13 +11,14 @@ GitHub System/
 |
 +-- DOCUMENTATION INDEX (You are here)
 |   |
-|   +-- [1] DEVELOPMENT_RULES.md        <- Start here for rules
+|   +-- [1] DEVELOPMENT_RULES.md         <- Start here for rules
 |   +-- [2] GITHUB_ARCHITECTURE_GUIDE.md <- Architecture overview
-|   +-- [3] COLLABORATOR_GUIDE_SANDEEP.md <- For team members
-|   +-- [4] _templates/BEST_PRACTICES.md <- Coding standards
+|   +-- [3] _templates/
+|   |       +-- BEST_PRACTICES.md        <- Coding standards
+|   |       +-- notify-on-push.yml       <- GitHub Actions workflow template
 |
 +-- VPS Settings (on server)
-    +-- /home/.settings_/claude.md      <- VPS-specific standards
+    +-- /home/.settings_/claude.md       <- VPS-specific standards
 ```
 
 ---
@@ -28,14 +29,12 @@ GitHub System/
 |----------|---------|-------------|
 | **DEVELOPMENT_RULES.md** | Rules for versioning, deployment, notifications | Before ANY deployment |
 | **GITHUB_ARCHITECTURE_GUIDE.md** | How the system works | Understanding the setup |
-| **COLLABORATOR_GUIDE_SANDEEP.md** | Step-by-step for team members | New team member onboarding |
 | **_templates/BEST_PRACTICES.md** | Coding standards, patterns | Creating new projects |
+| **_templates/notify-on-push.yml** | Teams notification workflow | Setting up new repos |
 
 ---
 
 ## 1. DEVELOPMENT_RULES.md
-
-**Location:** `GitHub System/DEVELOPMENT_RULES.md`
 
 **Key Topics:**
 - Version numbering (v1, v1.1, v2, etc.)
@@ -58,8 +57,6 @@ GitHub System/
 
 ## 2. GITHUB_ARCHITECTURE_GUIDE.md
 
-**Location:** `GitHub System/GITHUB_ARCHITECTURE_GUIDE.md`
-
 **Key Topics:**
 - Architecture diagram (Local -> GitHub -> VPS)
 - Component descriptions
@@ -70,27 +67,9 @@ GitHub System/
 
 ---
 
-## 3. COLLABORATOR_GUIDE_SANDEEP.md
+## 3. Templates
 
-**Location:** `GitHub System/COLLABORATOR_GUIDE_SANDEEP.md`
-
-**Key Topics:**
-- One-time setup (Git, credentials)
-- Clone a project
-- Make changes
-- Push to GitHub
-- Deploy to VPS
-- Revert to previous version
-- Quick reference commands
-- Troubleshooting
-
-**For:** New team members learning the workflow
-
----
-
-## 4. BEST_PRACTICES.md
-
-**Location:** `GitHub System/_templates/BEST_PRACTICES.md`
+### BEST_PRACTICES.md
 
 **Key Topics:**
 - Database migrations
@@ -100,8 +79,23 @@ GitHub System/
 - Error handling & logging
 - Deployment checklist
 - Documentation standards
+- Remote server file modification patterns
 
 **For:** Creating new projects with proper standards
+
+### notify-on-push.yml
+
+**Purpose:** GitHub Actions workflow that sends Teams notifications on every push to main/master.
+
+**Setup for any repo:**
+1. Copy `_templates/notify-on-push.yml` to `.github/workflows/notify-on-push.yml`
+2. Add GitHub Secrets (Settings > Secrets > Actions):
+   - `POWER_AUTOMATE_URL`
+   - `TEAMS_CHAT_ID`
+   - `AGENT_EMAIL`
+3. Push to main branch - notification will be sent!
+
+**For:** Enabling push notifications on any repository
 
 ---
 
@@ -129,7 +123,7 @@ ssh root@195.35.21.58 "cat /home/.settings_/claude.md"
 ### Before Starting Work
 ```bash
 # Read the rules
-cat "D:/31-12-2025/GitHub System/DEVELOPMENT_RULES.md"
+cat DEVELOPMENT_RULES.md
 
 # Check VPS standards
 ssh root@195.35.21.58 "cat /home/.settings_/claude.md"
@@ -138,13 +132,16 @@ ssh root@195.35.21.58 "cat /home/.settings_/claude.md"
 ### Creating a New Project
 ```bash
 # Check best practices template
-cat "D:/31-12-2025/GitHub System/_templates/BEST_PRACTICES.md"
+cat _templates/BEST_PRACTICES.md
 ```
 
-### Onboarding New Team Member
+### Setting Up Notifications for a Repo
 ```bash
-# Share the collaborator guide
-cat "D:/31-12-2025/GitHub System/COLLABORATOR_GUIDE_SANDEEP.md"
+# Copy workflow to your repo
+mkdir -p .github/workflows
+cp _templates/notify-on-push.yml .github/workflows/
+
+# Then add secrets in GitHub UI
 ```
 
 ---
@@ -169,4 +166,4 @@ cat "D:/31-12-2025/GitHub System/COLLABORATOR_GUIDE_SANDEEP.md"
 
 ---
 
-*Last Updated: 2026-01-01*
+*Last Updated: 2026-01-08*
