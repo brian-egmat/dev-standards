@@ -16,7 +16,8 @@ Standard processes and best practices for all GitHub-managed applications.
 8. [Repository Standards](#8-repository-standards)
 9. [Security Rules](#9-security-rules)
 10. [VPS Best Practices Reference](#10-vps-best-practices-reference)
-11. [Quick Reference Commands](#11-quick-reference-commands)
+11. [QA Workflow & Port Reservation](#11-qa-workflow--port-reservation)
+12. [Quick Reference Commands](#12-quick-reference-commands)
 
 ---
 
@@ -574,7 +575,48 @@ for attempt in range(MAX_RETRIES):
 
 ---
 
-## 11. Quick Reference Commands
+## 11. QA Workflow & Port Reservation
+
+**IMPORTANT:** All changes MUST be tested in QA before production deployment.
+
+See **QA_WORKFLOW.md** for detailed instructions.
+
+### Branch Strategy
+
+| Branch | Purpose |
+|--------|---------|
+| `main` | Production code - only merge from `qa` |
+| `qa` | Active development and testing |
+
+### Reserved Ports
+
+| Port | Environment | Usage |
+|------|-------------|-------|
+| 8003 | Production | Default app port |
+| **8004** | **QA** | **Reserved for testing ANY app** |
+
+### QA Process Summary
+
+```
+1. Develop on qa branch
+2. Push to GitHub (qa branch)
+3. Deploy to QA server (port 8004)
+4. Test on QA URL (/app-name-qa/)
+5. If tests pass: merge qa → main
+6. Tag release version
+7. Deploy to production (port 8003)
+```
+
+### QA Golden Rules
+
+1. **NEVER push directly to main** - Always develop on `qa` branch
+2. **ALWAYS test on QA URL first** - No exceptions
+3. **Port 8004 is reserved for QA** - Don't use for production
+4. **Merge only after testing** - QA must pass before production
+
+---
+
+## 12. Quick Reference Commands
 
 ### Git Basics
 
@@ -656,8 +698,10 @@ for attempt in range(MAX_RETRIES):
 8. **Always use SSH keys** - No passwords for VPS
 9. **Always use shared Mixpanel client** - `/home/.shared_utils/mixpanel/`
 10. **Always stagger cron jobs** - Avoid API rate limit conflicts
+11. **Always test on QA first** - Never push directly to main
+12. **Port 8004 is reserved for QA** - Use for testing any application
 
 ---
 
 *Document created: 2025-12-31*
-*Last updated: 2025-12-31*
+*Last updated: 2026-01-08*

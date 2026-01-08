@@ -17,6 +17,7 @@ GitHub System/
 |   |       +-- BEST_PRACTICES.md        <- Coding standards
 |   |       +-- DATABASE_SCHEMA_GUIDE.md <- Database & backward compatibility
 |   |       +-- notify-on-push.yml       <- GitHub Actions workflow template
+|   +-- [4] QA_WORKFLOW.md               <- QA testing before production
 |
 +-- VPS Settings (on server)
     +-- /home/.settings_/claude.md       <- VPS-specific standards
@@ -33,6 +34,7 @@ GitHub System/
 | **_templates/BEST_PRACTICES.md** | Coding standards, patterns | Creating new projects |
 | **_templates/DATABASE_SCHEMA_GUIDE.md** | Schema changes, migrations, rollbacks | Database modifications |
 | **_templates/notify-on-push.yml** | Teams notification workflow | Setting up new repos |
+| **QA_WORKFLOW.md** | QA testing workflow, port 8004 reserved | Before pushing to production |
 
 ---
 
@@ -85,7 +87,7 @@ GitHub System/
 
 **For:** Creating new projects with proper standards
 
-### DATABASE_SCHEMA_GUIDE.md (NEW)
+### DATABASE_SCHEMA_GUIDE.md
 
 **Key Topics:**
 - The Expand-Contract Pattern (industry standard)
@@ -116,6 +118,28 @@ GitHub System/
 3. Push to main branch - notification will be sent!
 
 **For:** Enabling push notifications on any repository
+
+---
+
+## 4. QA_WORKFLOW.md
+
+**Location:** `GitHub System/QA_WORKFLOW.md`
+
+**Key Topics:**
+- Branch strategy (`main` = production, `qa` = testing)
+- Port reservation (8004 for QA)
+- VPS QA environment setup
+- Development workflow (qa → test → merge → production)
+- Testing checklist
+- Merge and deployment process
+
+**For:** Testing changes before production deployment
+
+**Golden Rules:**
+1. NEVER push directly to main - develop on `qa` branch
+2. ALWAYS test on QA URL first - no exceptions
+3. Port 8004 is reserved for QA testing
+4. Merge only after testing passes
 
 ---
 
