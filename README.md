@@ -18,6 +18,7 @@ GitHub System/
 |   |       +-- DATABASE_SCHEMA_GUIDE.md <- Database & backward compatibility
 |   |       +-- notify-on-push.yml       <- GitHub Actions workflow template
 |   +-- [4] QA_WORKFLOW.md               <- QA testing before production
+|   +-- [5] DEPLOYMENT_TESTING_CHECKLIST.md <- Pre/post deploy verification
 |
 +-- VPS Settings (on server)
     +-- /home/.settings_/claude.md       <- VPS-specific standards
@@ -35,6 +36,7 @@ GitHub System/
 | **_templates/DATABASE_SCHEMA_GUIDE.md** | Schema changes, migrations, rollbacks | Database modifications |
 | **_templates/notify-on-push.yml** | Teams notification workflow | Setting up new repos |
 | **QA_WORKFLOW.md** | QA testing workflow, port 8004 reserved | Before pushing to production |
+| **DEPLOYMENT_TESTING_CHECKLIST.md** | Pre/post deployment verification | After every deployment |
 
 ---
 
@@ -140,6 +142,25 @@ GitHub System/
 2. ALWAYS test on QA URL first - no exceptions
 3. Port 8004 is reserved for QA testing
 4. Merge only after testing passes
+
+---
+
+## 5. DEPLOYMENT_TESTING_CHECKLIST.md
+
+**Location:** `GitHub System/DEPLOYMENT_TESTING_CHECKLIST.md`
+
+**Key Topics:**
+- Pre-deployment checklist
+- Complete user flow testing
+- Post-deployment verification
+- API endpoint testing
+- Common issues to check
+- Regression test script
+
+**For:** Verifying deployments work correctly
+
+**Critical Lesson (2026-01-08):**
+> A bug where notes weren't saved was introduced because the complete user flow wasn't tested after an endpoint change. Always verify ALL fields are saved correctly, not just that the API returns success.
 
 ---
 
