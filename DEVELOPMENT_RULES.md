@@ -15,9 +15,10 @@ Standard processes and best practices for all GitHub-managed applications.
 7. [New Project Setup](#7-new-project-setup)
 8. [Repository Standards](#8-repository-standards)
 9. [Security Rules](#9-security-rules)
-10. [VPS Best Practices Reference](#10-vps-best-practices-reference)
-11. [QA Workflow & Port Reservation](#11-qa-workflow--port-reservation)
-12. [Quick Reference Commands](#12-quick-reference-commands)
+10. [LLM API Key Management (CRITICAL)](#10-llm-api-key-management-critical)
+11. [VPS Best Practices Reference](#11-vps-best-practices-reference)
+12. [QA Workflow & Port Reservation](#12-qa-workflow--port-reservation)
+13. [Quick Reference Commands](#13-quick-reference-commands)
 
 ---
 
@@ -30,8 +31,9 @@ Before creating ANY new app, Claude MUST read and follow the best practices in:
 | File | Purpose |
 |------|---------|
 | `claude.md` | **Project structure, coding standards, API key management, error handling** |
+| `CLAUDE_INSTRUCTIONS.md` | **CRITICAL: Anthropic API key selection rules** |
 | `api_keys.json` | API keys reference |
-| `llm-providers-reference.json` | LLM provider configurations |
+| `llm-providers-reference.json` | LLM provider configurations (includes both Anthropic keys) |
 | `WEBHOOK_SETUP_GUIDE.md` | Webhook setup instructions |
 | `UPDATE_GUIDE.md` | Update procedures |
 | `GIT_GITHUB_GUIDE.md` | Git/GitHub reference |
@@ -472,7 +474,63 @@ Current version and history.
 
 ---
 
-## 10. VPS Best Practices Reference
+## 10. LLM API Key Management (CRITICAL)
+
+### ALWAYS ASK BEFORE USING ANTHROPIC API KEYS
+
+**When creating ANY new app that uses Anthropic/Claude API:**
+
+1. **STOP** and ask the user which key to use
+2. **WAIT** for confirmation before proceeding
+3. **DOCUMENT** the key choice in the app configuration
+
+### Available Anthropic Keys
+
+| Key Name | Purpose | Use For |
+|----------|---------|---------|
+| **Forum Responses** | Forum-related AI features | `gmat-forum-responder`, forum apps |
+| **Sales Operations** | Business operations AI features | Sales, Marketing, Teams-Pings, general apps |
+
+### Key Selection Process
+
+```
+┌─────────────────────────────────────────────────────────────────────┐
+│ NEW APP REQUIRES ANTHROPIC API?                                     │
+├─────────────────────────────────────────────────────────────────────┤
+│                                                                     │
+│  1. STOP - Do not auto-select a key                                │
+│                                                                     │
+│  2. ASK USER: "Which Anthropic API key should I use?"              │
+│     - Forum Responses (for forum-related apps)                     │
+│     - Sales Operations (for sales/marketing/general apps)          │
+│                                                                     │
+│  3. WAIT for user confirmation                                      │
+│                                                                     │
+│  4. CONFIGURE the app with the selected key                        │
+│                                                                     │
+│  5. DOCUMENT the key choice in secrets/api_keys.json or .env       │
+│                                                                     │
+└─────────────────────────────────────────────────────────────────────┘
+```
+
+### Default Assumption
+
+- **Most new apps are sales-related operations**
+- However, **NEVER assume** - always confirm with user first
+- More keys may be added in the future
+
+### Key Reference Location
+
+- VPS: `/home/.settings_/llm-providers-reference.json`
+- VPS: `/home/.settings_/CLAUDE_INSTRUCTIONS.md`
+
+### Golden Rule
+
+**ALWAYS ASK, NEVER ASSUME** when it comes to API key selection.
+
+---
+
+## 11. VPS Best Practices Reference
 
 ### Location
 
@@ -589,7 +647,7 @@ for attempt in range(MAX_RETRIES):
 
 ---
 
-## 11. QA Workflow & Port Reservation
+## 12. QA Workflow & Port Reservation
 
 **IMPORTANT:** All changes MUST be tested in QA before production deployment.
 
@@ -630,7 +688,7 @@ See **QA_WORKFLOW.md** for detailed instructions.
 
 ---
 
-## 12. Quick Reference Commands
+## 13. Quick Reference Commands
 
 ### Git Basics
 
@@ -714,8 +772,9 @@ See **QA_WORKFLOW.md** for detailed instructions.
 10. **Always stagger cron jobs** - Avoid API rate limit conflicts
 11. **Always test on QA first** - Never push directly to main
 12. **Port 8004 is reserved for QA** - Use for testing any application
+13. **ALWAYS ASK before using Anthropic API keys** - Never auto-select, confirm with user first
 
 ---
 
 *Document created: 2025-12-31*
-*Last updated: 2026-01-08*
+*Last updated: 2026-01-15*
