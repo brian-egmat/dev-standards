@@ -16,9 +16,10 @@ Standard processes and best practices for all GitHub-managed applications.
 8. [Repository Standards](#8-repository-standards)
 9. [Security Rules](#9-security-rules)
 10. [LLM API Key Management (CRITICAL)](#10-llm-api-key-management-critical)
-11. [VPS Best Practices Reference](#11-vps-best-practices-reference)
-12. [QA Workflow & Port Reservation](#12-qa-workflow--port-reservation)
-13. [Quick Reference Commands](#13-quick-reference-commands)
+11. [AI Usage Monitoring (REQUIRED)](#11-ai-usage-monitoring-required)
+12. [VPS Best Practices Reference](#12-vps-best-practices-reference)
+13. [QA Workflow & Port Reservation](#13-qa-workflow--port-reservation)
+14. [Quick Reference Commands](#14-quick-reference-commands)
 
 ---
 
@@ -530,7 +531,78 @@ Current version and history.
 
 ---
 
-## 11. VPS Best Practices Reference
+## 11. AI Usage Monitoring (REQUIRED)
+
+**ALL applications using Anthropic Claude API MUST integrate with the AI Usage Monitoring System.**
+
+### Why It's Required
+
+- **Cost Visibility**: Track spending per app and per day
+- **Budget Management**: Alerts when spending exceeds thresholds
+- **Debugging**: Track errors and API latency
+- **Daily Reports**: Automated Teams notifications
+
+### System Location
+
+```
+VPS: /home/.ai_monitoring/
+├── config/settings.json     # App configurations
+├── lib/ai_usage_logger.py   # Shared logging module
+├── logs/{App_Name}.jsonl    # Per-app log files
+└── services/daily_report_v2.py
+```
+
+### Quick Integration
+
+```python
+import sys
+sys.path.insert(0, '/home/.ai_monitoring/lib')
+from ai_usage_logger import AIUsageLogger
+
+# Initialize once at module level
+usage_logger = AIUsageLogger(app_name="Your_App_Name")
+
+# After EVERY Claude API call:
+response = client.messages.create(...)
+usage_logger.log_from_response(
+    response=response,
+    purpose="your_purpose",
+    latency_ms=latency
+)
+```
+
+### After Integration
+
+Add your app to `/home/.ai_monitoring/config/settings.json`:
+
+```json
+{
+  "apps": {
+    "Your_App_Name": {
+      "adapter_type": "jsonl",
+      "log_file": "/home/.ai_monitoring/logs/Your_App_Name.jsonl",
+      "description": "Your App Description"
+    }
+  }
+}
+```
+
+### Full Documentation
+
+See `_templates/AI_USAGE_MONITORING.md` for:
+- Complete integration guide
+- Error handling best practices
+- Testing and verification steps
+- Common pitfalls and solutions
+- Model pricing reference
+
+### Golden Rule
+
+> **Every Claude API call MUST be logged.** No exceptions.
+
+---
+
+## 12. VPS Best Practices Reference
 
 ### Location
 
@@ -647,7 +719,7 @@ for attempt in range(MAX_RETRIES):
 
 ---
 
-## 12. QA Workflow & Port Reservation
+## 13. QA Workflow & Port Reservation
 
 **IMPORTANT:** All changes MUST be tested in QA before production deployment.
 
@@ -688,7 +760,7 @@ See **QA_WORKFLOW.md** for detailed instructions.
 
 ---
 
-## 13. Quick Reference Commands
+## 14. Quick Reference Commands
 
 ### Git Basics
 

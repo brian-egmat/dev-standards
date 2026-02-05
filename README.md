@@ -15,8 +15,10 @@ GitHub System/
 |   +-- [2] GITHUB_ARCHITECTURE_GUIDE.md <- Architecture overview
 |   +-- [3] _templates/
 |   |       +-- BEST_PRACTICES.md        <- Coding standards
+|   |       +-- AI_USAGE_MONITORING.md   <- AI/Claude API usage tracking (REQUIRED)
 |   |       +-- DATABASE_SCHEMA_GUIDE.md <- Database & backward compatibility
 |   |       +-- notify-on-push.yml       <- GitHub Actions workflow template
+|   |       +-- api_keys_reference.json  <- API keys for all services
 |   +-- [4] QA_WORKFLOW.md               <- QA testing before production
 |   +-- [5] DEPLOYMENT_TESTING_CHECKLIST.md <- Pre/post deploy verification
 |
@@ -33,8 +35,10 @@ GitHub System/
 | **DEVELOPMENT_RULES.md** | Rules for versioning, deployment, notifications | Before ANY deployment |
 | **GITHUB_ARCHITECTURE_GUIDE.md** | How the system works | Understanding the setup |
 | **_templates/BEST_PRACTICES.md** | Coding standards, patterns | Creating new projects |
+| **_templates/AI_USAGE_MONITORING.md** | Claude API usage tracking | **ALL apps using Claude API** |
 | **_templates/DATABASE_SCHEMA_GUIDE.md** | Schema changes, migrations, rollbacks | Database modifications |
 | **_templates/notify-on-push.yml** | Teams notification workflow | Setting up new repos |
+| **_templates/api_keys_reference.json** | API keys for Customer.io, Segment, Mixpanel, etc. | Configuring new apps |
 | **QA_WORKFLOW.md** | QA testing workflow, port 8004 reserved | Before pushing to production |
 | **DEPLOYMENT_TESTING_CHECKLIST.md** | Pre/post deployment verification | After every deployment |
 
@@ -89,6 +93,33 @@ GitHub System/
 
 **For:** Creating new projects with proper standards
 
+### AI_USAGE_MONITORING.md (REQUIRED for Claude API apps)
+
+**Key Topics:**
+- AI usage logging integration
+- Cost tracking and budget alerts
+- Shared logger module usage
+- Error handling best practices
+- Testing and verification steps
+- Common pitfalls and solutions
+- Model pricing reference
+
+**For:** ALL applications using Anthropic Claude API
+
+**The Core Rule:**
+> Every Claude API call MUST be logged to the central monitoring system at `/home/.ai_monitoring/`
+
+**Quick Integration:**
+```python
+import sys
+sys.path.insert(0, '/home/.ai_monitoring/lib')
+from ai_usage_logger import AIUsageLogger
+
+logger = AIUsageLogger(app_name="Your_App")
+# After API call:
+logger.log_from_response(response, purpose="query", latency_ms=latency)
+```
+
 ### DATABASE_SCHEMA_GUIDE.md
 
 **Key Topics:**
@@ -120,6 +151,34 @@ GitHub System/
 3. Push to main branch - notification will be sent!
 
 **For:** Enabling push notifications on any repository
+
+### api_keys_reference.json
+
+**Purpose:** Centralized API keys reference for all third-party services.
+
+**Services included:**
+| Service | Keys Available |
+|---------|----------------|
+| **Customer.io** | Track API (Site ID, API Key), App API Key |
+| **Segment** | Write Key |
+| **Mixpanel** | Project ID, Secret, Username |
+| **Airtable** | Personal Access Token |
+| **Anthropic** | Forum Responses key, Sales Operations key |
+| **OpenAI** | API Key, Org ID |
+
+**For:** Configuring new applications with required API credentials
+
+**Usage:**
+```bash
+# View all available keys
+cat _templates/api_keys_reference.json
+
+# Example: Get Customer.io env vars for .env file
+# CIO_SITE_ID=f08b2621c1e5dd0345b8
+# CIO_API_KEY=2b48fe86d4fe6dfcde4d
+# CIO_TRACK_URL=https://track.customer.io/api/v1
+# CIO_APP_API_KEY=3acea18efa40180ec76ea74fe366e3ae
+```
 
 ---
 
@@ -240,4 +299,4 @@ cp _templates/notify-on-push.yml .github/workflows/
 
 ---
 
-*Last Updated: 2026-01-08*
+*Last Updated: 2026-02-05*

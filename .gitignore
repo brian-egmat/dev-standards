@@ -10,6 +10,7 @@ Marketing_GC_Reviews_Monthly/
 
 # Contains credentials - keep local only
 COLLABORATOR_GUIDE_SANDEEP.md
+_templates/api_keys_reference.json
 
 # Claude Code settings
 .claude/
